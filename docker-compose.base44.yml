@@ -1,0 +1,20 @@
+services:
+  app:
+    image: node:24
+    working_dir: /app
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    command: ["sh", "-ec", "npm ci && npm run build && echo 'Build complete.' && sleep infinity"]
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "test", "-f", "/app/build/src/bin/chrome-devtools-mcp.js"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 180s
+    ports:
+      - "3000:3000"
+
+volumes:
+  node_modules:
